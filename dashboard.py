@@ -1,6 +1,7 @@
 import tkinter as tk
 from tkinter import messagebox
 from add_case import AddCasePage
+from case_list import CaseListPage
 from calendar_page import CalendarPage
 from clients_page import ClientsPage
 from client_documents import ClientDocumentManager
@@ -189,6 +190,8 @@ class DashboardPage:
         # Load the relevant page
         if menu_item == "Cases":
             AddCasePage(self.root)
+        elif menu_item == "case_list":
+            CaseListPage(self.root)
         elif menu_item == "Calendar":
             CalendarPage(self.root)
         elif menu_item == "Documents":

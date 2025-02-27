@@ -2,7 +2,6 @@ import tkinter as tk
 from tkinter import ttk
 from theme import Theme
 
-
 class CaseListPage:
     def __init__(self, parent):
         self.parent = parent
@@ -24,7 +23,7 @@ class CaseListPage:
         header.pack(fill=tk.X, pady=(0, 20))
 
         # Search bar
-        search_frame = tk.Frame(header, bg=Theme.BACKGROUND, payx=10, pady=5)
+        search_frame = tk.Frame(header, bg=Theme.BACKGROUND, padx=10, pady=5)
         search_frame.pack(side=tk.LEFT)
 
         tk.Entry(
@@ -32,7 +31,7 @@ class CaseListPage:
             font=("Arial", 12),
             bg=Theme.BACKGROUND,
             width=40,
-            relief="flat",
+            relief="flat"
         ).pack(side=tk.LEFT, ipady=5)
 
         # Filter buttons
@@ -41,21 +40,20 @@ class CaseListPage:
         filter_frame.pack(side=tk.RIGHT)
 
         for filter_text in filters:
+            bg_color = Theme.PRIMARY if filter_text == "All Cases" else Theme.BACKGROUND
+            fg_color = Theme.WHITE if filter_text == "All Cases" else Theme.TEXT_PRIMARY
             tk.Button(
                 filter_frame,
                 text=filter_text,
-                bg=(Theme.PRIMARY if filter_text == "All Cases"
-                    else Theme.BACKGROUND),
-                fg=(Theme.WHITE if filter_text == "All Cases"
-                    else Theme.TEXT_PRIMARY),
+                bg=bg_color,
+                fg=fg_color,
                 font=("Arial", 11),
                 padx=15,
                 pady=5,
                 relief="flat",
-                cursor="hand2",
-            ).pack(side=tk.LEFT, payx=5)
+                cursor="hand2"
+            ).pack(side=tk.LEFT, padx=5)
     def create_cases_table(self, parent):
-        # Table headers
         columns = (
             "Case ID",
             "Title",
@@ -63,10 +61,15 @@ class CaseListPage:
             "Type",
             "Status",
             "Next Hearing",
-            "Actions",
+            "Actions"
         )
 
-        tree = ttk.Treeview(parent, columns=columns, show="headings", height=20)
+        tree = ttk.Treeview(
+            parent,
+            columns=columns,
+            show="headings",
+            height=20
+        )
 
         # Configure headers
         for col in columns:
@@ -75,42 +78,14 @@ class CaseListPage:
 
         # Sample data
         sample_cases = [
-            (
-                "C001",
-                "Smith vs State",
-                "John Smith",
-                "Criminal",
-                "Active",
-                "2024-02-15",
-                "",
-            ),
-            (
-                "C002",
-                "Property Dispute",
-                "Mary Johnson",
-                "Civil",
-                "Pending",
-                "2024-02-20",
-                "",
-            ),
-            (
-                "C003",
-                "Corporate Merger",
-                "Tech Corp",
-                "Corporate",
-                "Active",
-                "2024-02-18",
-                "",
-            ),
-            (
-                "C004",
-                "Divorce Case",
-                "Robert Brown",
-                "Family",
-                "Closed",
-                "N/A",
-                "",
-            ),
+            ("C001", "Smith vs State", 
+             "John Smith", "Criminal", "Active", "2024-02-15", ""),
+            ("C002", "Property Dispute", "Mary Johnson", 
+             "Civil", "Pending", "2024-02-20", ""),
+            ("C003", "Corporate Merger", "Tech Corp",
+             "Corporate", "Active", "2024-02-18", ""),
+            ("C004", "Divorce Case", 
+             "Robert Brown", "Family", "Closed", "N/A", "")
         ]
 
         # Insert sample data
@@ -119,10 +94,23 @@ class CaseListPage:
 
         # Add scrollbar
         scrollbar = ttk.Scrollbar(
-            parent, orient=tk.VERTICAL, command=tree.yview
+            parent,
+            orient=tk.VERTICAL,
+            command=tree.yview
         )
         tree.configure(yscrollcommand=scrollbar.set)
 
         # Pack elements
         tree.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
         scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
+
+class CaseListPage:
+    # Assuming the class definition is here
+    pass
+
+
+if __name__ == "__main__":
+    root = tk.Tk()
+    root.geometry("1200x800")
+    CaseListPage(root)
+    root.mainloop()

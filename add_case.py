@@ -1,6 +1,7 @@
 import tkinter as tk
 from tkinter import ttk, messagebox
 import sqlite3
+from tkcalendar import DateEntry  # type: ignore  # Ensure this is installed: `pip install tkcalendar`
 from theme import Theme
 
 
@@ -17,16 +18,13 @@ class AddCasePage:
         self.modal.configure(bg=Theme.WHITE)
         self.modal.resizable(False, False)
 
-        # Form container
         form = tk.Frame(self.modal, bg=Theme.WHITE, padx=40, pady=30)
         form.pack(fill=tk.BOTH, expand=True)
 
-        # Title
         tk.Label(
             form, text="New Case Details", font=("Arial", 20, "bold"), bg=Theme.WHITE
         ).pack(anchor="w", pady=(0, 30))
 
-        # Form fields
         self.entries = {}
         self.fields = [
             ("Case Title", "entry"),
@@ -69,6 +67,17 @@ class AddCasePage:
             padx=30,
             pady=10,
             command=self.save_case,
+        ).pack(side=tk.LEFT, padx=10)
+
+        tk.Button(
+            button_frame,
+            text="Submit",
+            bg=Theme.PRIMARY,  # Assuming Theme.PRIMARY is defined
+            fg=Theme.WHITE,
+            font=("Arial", 12, "bold"),
+            padx=30,
+            pady=10,
+            command=self.submit_case,
         ).pack(side=tk.RIGHT)
 
     def create_form_field(self, parent, field):
@@ -122,6 +131,26 @@ class AddCasePage:
 
     def save_case(self):
         """Validates and saves the case details into the database."""
+        case_data = self.get_case_data()
+        if not case_data:
+            return
+
+        self.insert_into_db(case_data)
+        messagebox.showinfo("Success", "Case saved successfully!")
+        self.modal.destroy()
+
+    def submit_case(self):
+        """Handles case submission."""
+        case_data = self.get_case_data()
+        if not case_data:
+            return
+
+        self.insert_into_db(case_data)
+        messagebox.showinfo("Submitted", "Case submitted successfully!")
+        self.modal.destroy()
+
+    def get_case_data(self):
+        """Retrieves and validates case details."""
         case_data = {}
         for label, widget in self.entries.items():
             if isinstance(widget, tk.Text):
@@ -135,12 +164,9 @@ class AddCasePage:
         for field in required_fields:
             if not case_data[field]:
                 messagebox.showerror("Error", f"{field} is required.")
-                return
+                return None
 
-        # Save to database
-        self.insert_into_db(case_data)
-        messagebox.showinfo("Success", "Case saved successfully!")
-        self.modal.destroy()
+        return case_data
 
     def insert_into_db(self, case_data):
         """Inserts case details into the SQLite database."""
