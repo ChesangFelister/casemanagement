@@ -22,7 +22,8 @@ class AddCasePage:
         form.pack(fill=tk.BOTH, expand=True)
 
         tk.Label(
-            form, text="New Case Details", font=("Arial", 20, "bold"), bg=Theme.WHITE
+            form, text="New Case Details", font=("Arial", 20, "bold"), 
+            bg=Theme.WHITE
         ).pack(anchor="w", pady=(0, 30))
 
         self.entries = {}
@@ -90,7 +91,8 @@ class AddCasePage:
 
         if field_type == "entry":
             entry = tk.Entry(
-                parent, font=("Arial", 12), bg=Theme.BACKGROUND, relief="flat", width=40
+                parent, font=("Arial", 12), bg=Theme.BACKGROUND, relief="flat", 
+                width=40
             )
             entry.pack(fill=tk.X, ipady=8)
             self.entries[label] = entry
@@ -187,7 +189,9 @@ class AddCasePage:
             """
         )
         cursor.execute(
-            "INSERT INTO cases (case_title, case_type, client_name, court, judge, filing_date, description) VALUES (?, ?, ?, ?, ?, ?, ?)",
+            """INSERT INTO cases (
+                case_title, case_type, client_name, court, judge, filing_date, description
+            ) VALUES (?, ?, ?, ?, ?, ?, ?)""",
             (
                 case_data["Case Title"],
                 case_data["Case Type"],

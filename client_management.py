@@ -76,12 +76,15 @@ class ClientManagementPage:
             self.create_client_card(grid_frame, client, idx)
 
     def create_client_card(self, parent, client, idx):
-        card = tk.Frame(parent, bg=Theme.WHITE, padx=20, pady=20, relief="ridge", bd=1)
-        card.grid(row=idx // 3, column=idx % 3, padx=10, pady=10, sticky="nsew")
+        card = tk.Frame(parent, bg=Theme.WHITE,
+                        padx=20, pady=20, relief="ridge", bd=1)
+        card.grid(row=idx // 3, column=idx % 3,
+                  padx=10, pady=10, sticky="nsew")
 
         # Client name
         tk.Label(
-            card, text=client["name"], font=("Arial", 16, "bold"), bg=Theme.WHITE
+            card, text=client["name"], font=("Arial", 16, "bold"),
+            bg=Theme.WHITE
         ).pack(anchor="w")
 
         # Client details
@@ -125,4 +128,4 @@ class ClientManagementPage:
         modal = tk.Toplevel(self.parent)
         modal.title("Add New Client")
         modal.geometry("500x600")
-        self.AddClientForm(modal)
+        # self.AddClientForm(modal)
