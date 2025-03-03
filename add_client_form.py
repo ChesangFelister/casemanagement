@@ -12,7 +12,6 @@ class AddClientForm:
         container = tk.Frame(self.modal, bg=Theme.WHITE, padx=40, pady=30)
         container.pack(fill=tk.BOTH, expand=True)
 
-        # Form title
         tk.Label(
             container,
             text="New Client Information",
@@ -20,14 +19,14 @@ class AddClientForm:
             bg=Theme.WHITE,
         ).pack(anchor="w", pady=(0, 30))
 
-        # Form fields
         fields = [
             ("Full Name", "entry"),
             ("Email", "entry"),
             ("Phone", "entry"),
             ("Address", "text"),
             ("ID/Passport", "entry"),
-            ("Client Type", "combobox", ["Individual", "Corporate", "Government"]),
+            ("Client Type", "combobox", ["Individual", "Corporate",
+                                         "Government"]),
             ("Notes", "text"),
         ]
 
@@ -35,7 +34,6 @@ class AddClientForm:
         for field in fields:
             self.create_form_field(container, field)
 
-        # Action buttons
         button_frame = tk.Frame(container, bg=Theme.WHITE)
         button_frame.pack(fill=tk.X, pady=20)
 
@@ -64,14 +62,14 @@ class AddClientForm:
     def create_form_field(self, parent, field):
         label, field_type, *options = field
 
-        # Field label
         tk.Label(parent, text=label, font=("Arial", 12), bg=Theme.WHITE).pack(
             anchor="w", pady=(10, 5)
         )
 
         if field_type == "entry":
             widget = tk.Entry(
-                parent, font=("Arial", 12), bg=Theme.BACKGROUND, relief="flat", width=40
+                parent, font=("Arial", 12), bg=Theme.BACKGROUND,
+                relief="flat", width=40
             )
             widget.pack(fill=tk.X, ipady=8)
 
@@ -99,7 +97,6 @@ class AddClientForm:
         self.entries[label] = widget
 
     def save_client(self):
-        # Collect form data
         client_data = {}
         for label, widget in self.entries.items():
             if isinstance(widget, tk.Text):
@@ -109,6 +106,4 @@ class AddClientForm:
             client_data[label] = value
 
         print("New client data:", client_data)
-        # Add database saving logic here
-
         self.modal.destroy()

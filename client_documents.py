@@ -123,6 +123,7 @@ class ClientDocumentManager:
         widget.bind("<Enter>", lambda event: widget.configure(bg=Theme.HOVER_COLOR))
         widget.bind("<Leave>", lambda event: widget.configure(bg=Theme.WHITE))
 
+
     def open_document(self, doc_path):
         try:
             os.startfile(doc_path)

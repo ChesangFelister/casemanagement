@@ -1,3 +1,7 @@
+import tkinter as tk
+from theme import Theme
+
+
 class CaseTracker:
     def __init__(self):
         self.cases = {}
@@ -34,4 +38,5 @@ class CaseTracker:
                 fg=Theme.WHITE,
                 bg=Theme.PRIMARY,
             ).pack()
-            tk.Label(stat_card, text=label, fg=Theme.WHITE, bg=Theme.PRIMARY).pack()
+            tk.Label(stat_card, text=label, fg=Theme.WHITE,
+                     bg=Theme.PRIMARY).pack()

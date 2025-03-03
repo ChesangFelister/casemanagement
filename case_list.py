@@ -9,11 +9,9 @@ class CaseListPage:
         self.setup_ui()
 
     def setup_ui(self):
-        # Main container with padding
         container = tk.Frame(self.parent, bg=Theme.WHITE)
         container.pack(fill=tk.BOTH, expand=True, padx=20, pady=20)
 
-        # Build UI components
         self.create_header(container)
         self.create_cases_table(container)
 
@@ -21,7 +19,6 @@ class CaseListPage:
         header = tk.Frame(parent, bg=Theme.WHITE)
         header.pack(fill=tk.X, pady=(0, 20))
 
-        # Search bar section
         search_frame = tk.Frame(header, bg=Theme.BACKGROUND, padx=10, pady=5)
         search_frame.pack(side=tk.LEFT)
 
@@ -34,7 +31,6 @@ class CaseListPage:
         )
         search_entry.pack(side=tk.LEFT, ipady=5)
 
-        # Filter buttons section
         filters = ["All Cases", "Active", "Pending", "Closed"]
         filter_frame = tk.Frame(header, bg=Theme.WHITE)
         filter_frame.pack(side=tk.RIGHT)
@@ -54,6 +50,7 @@ class CaseListPage:
                 relief="flat",
                 cursor="hand2",
             )
+
             filter_button.pack(side=tk.LEFT, padx=5)
 
     def create_cases_table(self, parent):
@@ -67,15 +64,12 @@ class CaseListPage:
             "Actions",
         )
 
-        # Create Treeview
         tree = ttk.Treeview(parent, columns=columns, show="headings", height=20)
 
-        # Configure column headers
         for col in columns:
             tree.heading(col, text=col)
             tree.column(col, width=150)
 
-        # Sample data
         sample_cases = [
             (
                 "C001",
@@ -107,15 +101,12 @@ class CaseListPage:
             ("C004", "Divorce Case", "Robert Brown", "Family", "Closed", "N/A", ""),
         ]
 
-        # Populate table with sample data
         for case in sample_cases:
             tree.insert("", tk.END, values=case)
 
-        # Add vertical scrollbar
         scrollbar = ttk.Scrollbar(parent, orient=tk.VERTICAL, command=tree.yview)
         tree.configure(yscrollcommand=scrollbar.set)
 
-        # Layout components
         tree.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
         scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
 
