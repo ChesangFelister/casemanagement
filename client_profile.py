@@ -16,7 +16,8 @@ class ClientProfileView:
 
     def apply_styles(self):
         style = ttk.Style()
-        style.configure("Profile.TNotebook", background=Theme.WHITE, padding=10)
+        style.configure("Profile.TNotebook", background=Theme.WHITE, 
+                        padding=10)
         style.configure(
             "Profile.TNotebook.Tab",
             padding=[20, 10],
@@ -64,7 +65,8 @@ class ClientProfileView:
         card.pack(side=tk.LEFT, padx=10, fill=tk.X, expand=True)
 
         tk.Label(
-            card, text=value, font=("DM Sans", 24, "bold"), fg=color, bg=Theme.WHITE
+            card, text=value, font=("DM Sans", 24, "bold"), fg=color, 
+            bg=Theme.WHITE
         ).pack(pady=(15, 5))
         tk.Label(
             card,

@@ -1,5 +1,5 @@
 import tkinter as tk
-from tkinter import filedialog, messagebox
+from tkinter import filedialog, messagebox, ttk
 from theme import Theme
 from pathlib import Path
 import shutil
@@ -13,119 +13,143 @@ class ClientDocumentManager:
         self.client_id = client_id
         self.documents = []
         self.current_view = "grid"
-        self.setup_ui()
+
+        # Main container with modern styling
+        self.main_container = tk.Frame(self.parent, bg=Theme.BACKGROUND)
+        self.main_container.pack(fill=tk.BOTH, expand=True)
+
+        # Create header section
+        self.create_header()
+
+        # Create search bar
+        self.create_search_bar()
+
+        # Create toolbar with modern buttons
+        self.create_toolbar()
+
+        # Create main content area
+        self.content_frame = tk.Frame(self.main_container, bg=Theme.BACKGROUND)
+        self.content_frame.pack(fill=tk.BOTH, expand=True, padx=20, pady=10)
+
+        # Initialize the grid frame
+        self.grid_frame = tk.Frame(self.content_frame, bg=Theme.BACKGROUND)
+        self.grid_frame.pack(fill=tk.BOTH, expand=True)
+
         self.load_documents()
-
-    def setup_ui(self):
-        # Placeholder for UI setup
-        pass
-    def load_documents(self):
-        # Create client document directory if it doesn't exist
-        self.doc_dir = Path(f"client_documents/{self.client_id}")
-        self.doc_dir.mkdir(parents=True, exist_ok=True)
-
-        # Load existing documents
-        for file_path in self.doc_dir.glob("*.*"):
-            doc_info = {
-                "name": file_path.name,
-                "type": file_path.suffix[1:].upper(),
-                "date": datetime.fromtimestamp(file_path.stat().st_mtime).strftime(
-                    "%Y-%m-%d"
-                ),
-                "path": str(file_path),
-            }
-            self.documents.append(doc_info)
-
         self.refresh_view()
 
-    def upload_document(self):
-        file_paths = filedialog.askopenfilenames(
-            title="Select Documents",
-            filetypes=[
-                ("All Files", "*.*"),
-                ("PDF Files", "*.pdf"),
-                ("Word Documents", "*.doc;*.docx"),
-                ("Images", "*.jpg;*.jpeg;*.png"),
-            ],
+    def create_header(self):
+        header = tk.Frame(self.main_container, bg=Theme.PRIMARY)
+        header.pack(fill=tk.X, padx=20, pady=(20, 0))
+
+        title = tk.Label(
+            header,
+            text="Document Management",
+            font=("Arial", 24, "bold"),
+            fg=Theme.WHITE,
+            bg=Theme.PRIMARY,
+        )
+        title.pack(side=tk.LEFT, pady=20)
+
+        doc_count = tk.Label(
+            header,
+            text=f"Total Documents: {len(self.documents)}",
+            font=("Arial", 12),
+            fg=Theme.WHITE,
+            bg=Theme.PRIMARY,
+        )
+        doc_count.pack(side=tk.RIGHT, pady=20)
+
+    def create_search_bar(self):
+        search_frame = tk.Frame(self.main_container, bg=Theme.BACKGROUND)
+        search_frame.pack(fill=tk.X, padx=20, pady=10)
+
+        self.search_var = tk.StringVar()
+        search_entry = ttk.Entry(
+            search_frame, textvariable=self.search_var, font=("Arial", 12), width=40
+        )
+        search_entry.pack(side=tk.LEFT, pady=10)
+        search_entry.insert(0, "Search documents...")
+        search_entry.bind(
+            "<FocusIn>",
+            lambda e: search_entry.delete(0, tk.END)
+            if search_entry.get() == "Search documents..."
+            else None,
         )
 
-        for file_path in file_paths:
-            source_path = Path(file_path)
-            dest_path = self.doc_dir / source_path.name
+        search_btn = tk.Button(
+            search_frame,
+            text="🔍 Search",
+            command=self.search_documents,
+            bg=Theme.SECONDARY,
+            fg=Theme.WHITE,
+            font=("Arial", 10),
+            padx=15,
+            pady=5,
+        )
+        search_btn.pack(side=tk.LEFT, padx=5)
 
-            try:
-                shutil.copy2(source_path, dest_path)
-                doc_info = {
-                    "name": source_path.name,
-                    "type": source_path.suffix[1:].upper(),
-                    "date": datetime.now().strftime("%Y-%m-%d"),
-                    "path": str(dest_path),
-                }
-                self.documents.append(doc_info)
-                messagebox.showinfo(
-                    "Success", f"Document {source_path.name} uploaded successfully"
-                )
-            except Exception as e:
-                messagebox.showerror(
-                    "Error", f"Failed to upload {source_path.name}: {str(e)}"
-                )
+    def create_toolbar(self):
+        toolbar = tk.Frame(self.main_container, bg=Theme.BACKGROUND)
+        toolbar.pack(fill=tk.X, padx=20, pady=10)
 
-        self.refresh_view()
+        # Modern upload button
+        upload_btn = tk.Button(
+            toolbar,
+            text="📤 Upload Document",
+            command=self.upload_document,
+            bg=Theme.PRIMARY,
+            fg=Theme.WHITE,
+            font=("Arial", 12),
+            padx=20,
+            pady=10,
+            relief=tk.FLAT,
+            cursor="hand2",
+        )
+        upload_btn.pack(side=tk.LEFT)
 
-    def toggle_view(self):
-        self.current_view = "grid" if self.current_view == "list" else "list"
-        self.refresh_view()
+        # View toggle buttons
+        view_frame = tk.Frame(toolbar, bg=Theme.BACKGROUND)
+        view_frame.pack(side=tk.RIGHT)
 
-    def refresh_view(self):
-        # Clear existing view
-        for widget in self.grid_frame.winfo_children():
-            widget.destroy()
+        grid_btn = tk.Button(
+            view_frame,
+            text="�Grid",
+            command=lambda: self.set_view("grid"),
+            bg=Theme.SECONDARY if self.current_view == "grid" else Theme.WHITE,
+            fg=Theme.WHITE if self.current_view == "grid" else Theme.SECONDARY,
+            font=("Arial", 12),
+            padx=15,
+            pady=5,
+            relief=tk.FLAT,
+            cursor="hand2",
+        )
+        grid_btn.pack(side=tk.LEFT, padx=5)
 
-        if self.current_view == "grid":
-            self.create_grid_view()
+        list_btn = tk.Button(
+            view_frame,
+            text="📋List",
+            command=lambda: self.set_view("list"),
+            bg=Theme.SECONDARY if self.current_view == "list" else Theme.WHITE,
+            fg=Theme.WHITE if self.current_view == "list" else Theme.SECONDARY,
+            font=("Arial", 12),
+            padx=15,
+            pady=5,
+            relief=tk.FLAT,
+            cursor="hand2",
+        )
+        list_btn.pack(side=tk.LEFT)
+
+    def search_documents(self):
+        search_term = self.search_var.get().lower()
+        if search_term and search_term != "search documents...":
+            self.filtered_documents = [
+                doc for doc in self.documents if search_term in doc["name"].lower()
+            ]
+            self.refresh_view(self.filtered_documents)
         else:
-            self.create_list_view()
+            self.refresh_view(self.documents)
 
-    def create_grid_view(self):
-        for doc in self.documents:
-            self.create_document_card(doc)
-
-    def create_list_view(self):
-        # Create headers
-        headers = tk.Frame(self.frame, bg=Theme.BACKGROUND)
-        headers.pack(fill=tk.X, pady=(0, 10))
-
-        tk.Label(headers, text="Name", width=30, anchor="w", bg=Theme.BACKGROUND).pack(
-            side=tk.LEFT, padx=5
-        )
-        tk.Label(headers, text="Type", width=10, bg=Theme.BACKGROUND).pack(
-            side=tk.LEFT, padx=5
-        )
-        tk.Label(headers, text="Date", width=15, bg=Theme.BACKGROUND).pack(
-            side=tk.LEFT, padx=5
-        )
-
-        # Create list items
-        for doc in self.documents:
-            item = tk.Frame(self.frame, bg=Theme.WHITE)
-            item.pack(fill=tk.X, pady=2)
-
-            tk.Label(item, text=doc["name"], width=30, anchor="w").pack(
-                side=tk.LEFT, padx=5
-            )
-            tk.Label(item, text=doc["type"], width=10).pack(
-                side=tk.LEFT, padx=5)
-            tk.Label(item, text=doc["date"], width=15).pack(
-                side=tk.LEFT, padx=5)
-
-            self.bind_hover_effects(item)
-    def bind_hover_effects(self, widget):
-        widget.bind("<Enter>", lambda event: widget.configure(bg=Theme.HOVER_COLOR))
-        widget.bind("<Leave>", lambda event: widget.configure(bg=Theme.WHITE))
-
-
-    def open_document(self, doc_path):
-        try:
-            os.startfile(doc_path)
-        except Exception as e:
-            messagebox.showerror("Error", f"Failed to open document: {str(e)}")
+    def set_view(self, view_type):
+        self.current_view = view_type
+        self.refresh_view()

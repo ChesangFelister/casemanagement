@@ -1,7 +1,7 @@
 import tkinter as tk
 from tkinter import ttk, messagebox
 import sqlite3
-from tkcalendar import DateEntry  # type: ignore  # Ensure this is installed: `pip install tkcalendar`
+from tkcalendar import DateEntry  # type: ignore  # Ensure this is installed: `
 from theme import Theme
 
 
@@ -190,7 +190,8 @@ class AddCasePage:
         )
         cursor.execute(
             """INSERT INTO cases (
-                case_title, case_type, client_name, court, judge, filing_date, description
+                case_title, case_type, client_name, court, judge, filing_date, 
+                description
             ) VALUES (?, ?, ?, ?, ?, ?, ?)""",
             (
                 case_data["Case Title"],

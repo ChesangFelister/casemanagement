@@ -1,11 +1,17 @@
 import tkinter as tk
 from tkinter import ttk
-from theme import Theme
+from theme import Theme  # ✅ Ensure theme.py exists
 
 
 class AddClientForm:
-    def __init__(self, modal):
-        self.modal = modal
+    def __init__(self, parent):
+        self.modal = tk.Toplevel(parent)  # ✅ Create modal window
+        self.modal.title("Add New Client")
+        self.modal.geometry("500x600")
+        self.modal.configure(bg=Theme.WHITE)
+        self.modal.resizable(False, False)
+        self.modal.grab_set()  # ✅ Prevent interaction with main window
+
         self.setup_form()
 
     def setup_form(self):
@@ -25,8 +31,8 @@ class AddClientForm:
             ("Phone", "entry"),
             ("Address", "text"),
             ("ID/Passport", "entry"),
-            ("Client Type", "combobox", ["Individual", "Corporate",
-                                         "Government"]),
+            ("Client Type", "combobox", ["Individual", 
+                                         "Corporate", "Government"]),
             ("Notes", "text"),
         ]
 
@@ -45,7 +51,7 @@ class AddClientForm:
             font=("Arial", 12),
             padx=30,
             pady=10,
-            command=self.modal.destroy,
+            command=self.modal.destroy,  # ✅ Closes modal
         ).pack(side=tk.LEFT)
 
         tk.Button(
@@ -68,7 +74,7 @@ class AddClientForm:
 
         if field_type == "entry":
             widget = tk.Entry(
-                parent, font=("Arial", 12), bg=Theme.BACKGROUND,
+                parent, font=("Arial", 12), bg=Theme.BACKGROUND, 
                 relief="flat", width=40
             )
             widget.pack(fill=tk.X, ipady=8)
@@ -97,13 +103,22 @@ class AddClientForm:
         self.entries[label] = widget
 
     def save_client(self):
+        """Collects and prints client data, then closes the modal"""
         client_data = {}
         for label, widget in self.entries.items():
             if isinstance(widget, tk.Text):
                 value = widget.get("1.0", tk.END).strip()
             else:
-                value = widget.get()
+                value = widget.get().strip()
             client_data[label] = value
 
         print("New client data:", client_data)
-        self.modal.destroy()
+        self.modal.destroy()  # ✅ Closes the modal after saving
+
+
+# ✅ Example usage: Open the form in a test environment
+if __name__ == "__main__":
+    root = tk.Tk()
+    root.withdraw()  # ✅ Hide main window for testing
+    AddClientForm(root)
+    root.mainloop()

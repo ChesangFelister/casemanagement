@@ -31,23 +31,24 @@ class DocumentTemplateSystem:
                 padx=10,
                 pady=5,
             ).pack(pady=10)
+
     def use_template(self, template_name):
         """Handles the selection of a document template."""
         if template_name in self.templates:
             self.templates[template_name]()  # Call the appropriate method
         else:
-            messagebox.showerror("Error", f"Template '{template_name}' not found!")
-
-
-
+            messagebox.showerror("Error",
+                                 f"Template '{template_name}' not found!")
 
     def create_legal_notice(self):
         """Placeholder function for creating a legal notice."""
-        messagebox.showinfo("Legal Notice", "Generating a Legal Notice template...")
+        messagebox.showinfo("Legal Notice",
+                            "Generating a Legal Notice template...")
 
     def create_petition(self):
         """Placeholder function for creating a court petition."""
-        messagebox.showinfo("Court Petition", "Generating a Court Petition template...")
+        messagebox.showinfo("Court Petition",
+                            "Generating a Court Petition template...")
 
     def create_agreement(self):
         """Placeholder function for creating an agreement."""
