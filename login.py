@@ -13,14 +13,16 @@ class LoginPage:
         self.setup_ui()
 
     def setup_ui(self):
+        """Creates the login UI."""
+        self.root.title("Login - Nimble Group")
+        self.root.geometry("900x600")
+
         container = tk.Frame(self.root, bg=Theme.WHITE)
         container.pack(fill=tk.BOTH, expand=True)
 
-        # Left side with branding
-        left_frame = tk.Frame(container, bg=Theme.PRIMARY, width=600)
+        left_frame = tk.Frame(container, bg=Theme.PRIMARY, width=400)
         left_frame.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
 
-        # Brand text
         brand_label = tk.Label(
             left_frame,
             text="Nimble Group",
@@ -30,16 +32,17 @@ class LoginPage:
         )
         brand_label.pack(pady=50)
 
-        # Right side with login form
+        # Right Section (Login Form)
         right_frame = tk.Frame(container, bg=Theme.WHITE, padx=60)
         right_frame.pack(side=tk.RIGHT, fill=tk.BOTH, expand=True)
 
         self.create_login_form(right_frame)
 
     def create_login_form(self, parent):
-        # Welcome text
+        """Creates the login form elements."""
         tk.Label(
-            parent, text="Welcome Back", font=("Arial", 24, "bold"), bg=Theme.WHITE
+            parent, text="Welcome Back", font=("Arial", 24, "bold"),
+            bg=Theme.WHITE
         ).pack(pady=(100, 20))
 
         tk.Label(
@@ -50,18 +53,19 @@ class LoginPage:
             bg=Theme.WHITE,
         ).pack(pady=(0, 40))
 
-        # Email field
-        tk.Label(parent, text="Email", font=("Arial", 11), bg=Theme.WHITE).pack(
+        tk.Label(parent, text="Email", font=("Arial", 11),
+                 bg=Theme.WHITE).pack(
             anchor="w"
         )
 
         self.email_entry = tk.Entry(
-            parent, font=("Arial", 12), bg=Theme.BACKGROUND, relief="flat", width=30
+            parent, font=("Arial", 12),
+            bg=Theme.BACKGROUND, relief="flat", width=30
         )
         self.email_entry.pack(pady=(5, 20), ipady=8)
 
-        # Password field
-        tk.Label(parent, text="Password", font=("Arial", 11), bg=Theme.WHITE).pack(
+        tk.Label(parent, text="Password", font=("Arial", 11),
+                 bg=Theme.WHITE).pack(
             anchor="w"
         )
 
@@ -75,13 +79,11 @@ class LoginPage:
         )
         self.password_entry.pack(pady=(5, 20), ipady=8)
 
-        # Error message label
         self.error_label = tk.Label(
             parent, text="", fg="red", bg=Theme.WHITE, font=("Arial", 10)
         )
         self.error_label.pack(pady=(0, 10))
 
-        # Login button
         tk.Button(
             parent,
             text="Sign In",
@@ -96,22 +98,25 @@ class LoginPage:
         ).pack(pady=30)
 
     def handle_login(self):
+        """Validates login credentials and redirects to the dashboard."""
         email = self.email_entry.get()
         password = self.password_entry.get()
 
-        # Check credentials
         if email == "admin@legal.com" and password == "admin123":
-            # Clear login page
-            for widget in self.root.winfo_children():
-                widget.destroy()
-
-            # Create dashboard
-            DashboardPage(self.root)
+            self.redirect_to_dashboard()
         else:
             self.error_label.config(text="Invalid email or password")
 
+    def redirect_to_dashboard(self):
+        """Destroys the login UI and initializes the dashboard."""
+        for widget in self.root.winfo_children():
+            widget.destroy()
+        DashboardPage(self.root)
+
+
+from ttkthemes import ThemedTk
 
 if __name__ == "__main__":
-    root = ThemedTk(theme="plastik")  # Initialize ThemedTk with a chosen theme
+    root = ThemedTk(theme="plastik")  
     app = LoginPage(root)
     root.mainloop()

@@ -1,131 +1,138 @@
 import tkinter as tk
-from tkinter import messagebox
-from case_list import CaseListPage
-from calendar_page import CalendarPage
-from client_management import ClientManagementPage
-from client_documents import ClientDocumentManager
+from tkinter import ttk
+# from PIL import Image, ImageTk  # Ensure Pillow is installed
 from theme import Theme
+import os  # Check if image files exist
 
 
 class DashboardPage:
     def __init__(self, root):
         self.root = root
 
-        # ✅ Define content frame before calling clear_content()
+        # Main container
         self.container = tk.Frame(self.root, bg=Theme.BACKGROUND)
         self.container.pack(fill=tk.BOTH, expand=True)
 
+        # Sidebar
         self.sidebar = tk.Frame(self.container, bg=Theme.PRIMARY, width=250)
         self.sidebar.pack(side=tk.LEFT, fill=tk.Y)
         self.sidebar.pack_propagate(False)
 
-        # ✅ Ensure self.content exists before calling clear_content()
-        self.content = tk.Frame(self.container, bg=Theme.BACKGROUND)
-        self.content.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
+        # Content area (Dashboard)
+        self.content_frame = tk.Frame(self.container, bg=Theme.BACKGROUND)
+        self.content_frame.pack(side=tk.RIGHT, fill=tk.BOTH, expand=True)
 
-        self.create_sidebar(self.sidebar)
-        self.show_dashboard_page()  # Show dashboard by default
+        self.create_sidebar()
+        self.create_dashboard()
 
-    def create_sidebar(self, parent):
-        tk.Label(
-            parent,
-            text="LEGAL PRO",
-            font=("Arial", 20, "bold"),
-            bg=Theme.PRIMARY,
-            fg=Theme.WHITE,
-        ).pack(pady=30)
+    def create_sidebar(self):
+        """Creates the sidebar with icons & navigation."""
 
+        # Load logo (fallback if missing)
+        logo_path = "assets/logo.png"
+        if os.path.exists(logo_path):
+            logo_img = Image.open(logo_path).resize((80, 80), Image.LANCZOS)
+            self.logo = ImageTk.PhotoImage(logo_img)
+            logo_label = tk.Label(self.sidebar, image=self.logo,
+                                  bg=Theme.PRIMARY)
+        else:
+            logo_label = tk.Label(
+                self.sidebar, text="LOGO", font=("Arial", 16),
+                bg=Theme.PRIMARY, fg="white"
+            )
+        logo_label.pack(pady=20)
+
+        # Sidebar menu items
         menu_items = [
-            ("Dashboard", "📊"),
-            ("Cases", "📁"),
-            ("Calendar", "📅"),
-            ("Documents", "📄"),
-            ("Clients", "👥"),
-            ("Settings", "⚙️"),
+            ("Dashboard", "assets/Dashboard.png"),
+            ("Cases", "assets/Folder_Check.png"),
+            ("Calendar", "assets/Manager_Desk.png"),
+            ("Documents", "assets/Document_Filled.png"),
+            ("Clients", "assets/User_Circle_Single.png"),
+            ("Settings", "assets/Setting.png"),
         ]
 
-        for text, icon in menu_items:
+        for text, icon_path in menu_items:
+            icon_img = None
+            if os.path.exists(icon_path):
+                icon = Image.open(icon_path).resize((25, 25), Image.LANCZOS)
+                icon_img = ImageTk.PhotoImage(icon)
+
             btn = tk.Button(
-                parent,
-                text=f" {icon} {text}",
-                font=("Arial", 12),
+                self.sidebar,
+                text=f" {text}",
+                font=("Arial", 12, "bold"),
+                image=icon_img if icon_img else None,
+                compound=tk.LEFT,
                 bg=Theme.PRIMARY,
-                fg=Theme.WHITE,
-                bd=0,
+                fg=Theme.TEXT_PRIMARY,
+                activebackground=Theme.PRIMARY,
+                relief=tk.FLAT,
                 padx=20,
-                pady=15,
+                pady=10,
                 anchor="w",
                 cursor="hand2",
                 command=lambda t=text: self.handle_menu_click(t),
             )
-            btn.pack(fill=tk.X)
+            btn.image = icon_img  # Prevent garbage collection
+            btn.pack(fill=tk.X, padx=10, pady=5)
+    def create_dashboard(self):
+        """Creates the main dashboard UI."""
+        self.clear_content()
+
+        # Welcome Message
+        tk.Label(
+            self.content_frame,
+            text="Welcome Back, John Doe",
+            font=("Arial", 24, "bold"),
+            bg=Theme.BACKGROUND,
+            fg=Theme.TEXT_PRIMARY,
+            pady=10,
+        ).pack(anchor="w", padx=20)
+
+        # Dashboard Stats
+        stats_frame = tk.Frame(self.content_frame, bg=Theme.BACKGROUND)
+        stats_frame.pack(pady=20, fill=tk.BOTH, expand=True)
+
+        stats = [
+            ("2700", "Total Cases"),
+            ("1250", "Solved Cases"),
+            ("1450", "Pending Cases"),
+        ]
+
+        for count, label in stats:
+            card = tk.Frame(
+                stats_frame, bg=Theme.PRIMARY, padx=20, pady=10,
+                width=200, height=100
+            )
+            card.pack(side=tk.LEFT, padx=10)
+
+            tk.Label(
+                card,
+                text=count,
+                font=("Arial", 18, "bold"),
+                bg=Theme.PRIMARY,
+                fg=Theme.TEXT_PRIMARY,
+            ).pack()
+            tk.Label(
+                card,
+                text=label,
+                font=("Arial", 12),
+                bg=Theme.PRIMARY,
+                fg=Theme.TEXT_SECONDARY,
+            ).pack()
 
     def handle_menu_click(self, menu_item):
-        """Handles switching between different pages."""
+        """Handles sidebar navigation."""
         self.clear_content()
 
         if menu_item == "Dashboard":
-            self.show_dashboard_page()
-        elif menu_item == "Cases":
-            CaseListPage(self.content)
-        elif menu_item == "Calendar":
-            CalendarPage(self.content)
+            self.create_dashboard()
         elif menu_item == "Documents":
-            ClientDocumentManager(self.content, client_id=None)
-        elif menu_item == "Clients":
-            ClientManagementPage(self.content)
-        elif menu_item == "Settings":
-            self.show_settings_page()
-        else:
-            messagebox.showinfo(
-                "Navigation", f"Feature for '{menu_item}' not yet implemented!"
-            )
+            from client_documents import ClientDocumentManager
+            ClientDocumentManager(self.content_frame, client_id="123")  
 
     def clear_content(self):
-        """Clears the current content area before loading a new page."""
-        for widget in self.content.winfo_children():
+        """Clears the content area before switching views."""
+        for widget in self.content_frame.winfo_children():
             widget.destroy()
-
-    def show_dashboard_page(self):
-        """Displays the dashboard welcome page."""
-        tk.Label(
-            self.content,
-            text="Welcome to the Dashboard",
-            font=("Arial", 24, "bold"),
-            bg=Theme.BACKGROUND,
-            fg=Theme.TEXT_SECONDARY,
-        ).pack(pady=20)
-
-        tk.Label(
-            self.content,
-            text="This is the main dashboard page.",
-            font=("Arial", 14),
-            bg=Theme.BACKGROUND,
-            fg=Theme.TEXT_SECONDARY,
-        ).pack(pady=10)
-
-    def show_settings_page(self):
-        """Displays the settings page."""
-        tk.Label(
-            self.content,
-            text="Settings",
-            font=("Arial", 24, "bold"),
-            bg=Theme.BACKGROUND,
-            fg=Theme.TEXT_SECONDARY,
-        ).pack(pady=20)
-
-        tk.Label(
-            self.content,
-            text="This is the settings page.",
-            font=("Arial", 14),
-            bg=Theme.BACKGROUND,
-            fg=Theme.TEXT_SECONDARY,
-        ).pack(pady=10)
-
-
-if __name__ == "__main__":
-    root = tk.Tk()
-    root.geometry("1200x800")
-    root.title("Legal Pro - Dashboard")
-    DashboardPage(root)
-    root.mainloop()

@@ -1,7 +1,6 @@
 import tkinter as tk
 from tkinter import filedialog, messagebox
 from theme import Theme
-from PIL import Image, ImageTk
 import os
 
 
@@ -20,7 +19,6 @@ class DocumentsPage:
         toolbar = tk.Frame(self.parent, bg=Theme.WHITE)
         toolbar.pack(fill=tk.X, padx=20, pady=20)
 
-        # Upload button
         tk.Button(
             toolbar,
             text="Upload Document",
@@ -32,7 +30,6 @@ class DocumentsPage:
             command=self.upload_document,
         ).pack(side=tk.LEFT)
 
-        # View options
         self.view_mode = tk.StringVar(value="grid")
         views = [("Grid View", "grid"), ("List View", "list")]
 
